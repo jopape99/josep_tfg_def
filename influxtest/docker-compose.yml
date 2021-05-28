@@ -1,0 +1,45 @@
+version: "3.7"
+
+services:
+    app:
+        build: .
+        image: javaapp
+        container_name: app
+        ports:
+            - 8080:8080
+        networks: 
+            - app_network
+        links:
+            - influxdb
+
+    influxdb:
+        image: influxdb:1.8
+        container_name: influxdb
+        ports: 
+            - 8086:8086
+        networks: 
+            - app_network
+        volumes:
+            - prueba-influxdb-data:/var/lib/influxdb
+        environment:
+            INFLUXDB_ADMIN_USER: femiot
+            INFLUXDB_ADMIN_PASSWORD: mcia1234
+            INFLUXDB_DB: pruebadb
+
+    grafana:
+        image: grafana/grafana
+        container_name: grafana
+        ports:
+            - 3000:3000
+        networks: 
+            - app_network
+        volumes:
+            - prueba-grafana-data:/var/lib/grafana
+        links:
+            -   influxdb
+        
+networks: 
+    app_network:
+volumes:
+    prueba-influxdb-data:
+    prueba-grafana-data:
